@@ -50,12 +50,12 @@ jobs:
         run: |
           base=$ENV_1 
           pr_title="${base} <- ${{ steps.branch_name.outputs.current }}"
-          echo "::set-output name=count::$(gh pr list --search '${pr_title} in:title' --base ${base} | wc -l)"
-          echo "::set-output name=pr_title::$pr_title"
+          echo "::set-output name=count::$(gh pr list --head ${{ steps.branch_name.outputs.current }} --base ${base} | wc -l)"
       # PRがまだ存在しなければ、PRを作成
       - name: Create release pr
         if: ${{ steps.check_pr.outputs.count == 0 && steps.branch_name.outputs.base != '' }}
         run: |
-          base=$ENV_1 
-          gh pr create --base ${base} --head ${{ steps.branch_name.outputs.current }} --title ${{ steps.check_pr.outputs.pr_title }} --body ''
+          base=$ENV_1
+          pr_title="${base}<-${{ steps.branch_name.outputs.current }}"
+          gh pr create --base ${base} --head ${{ steps.branch_name.outputs.current }} --title ${{ pr_title }} --body ''
           
