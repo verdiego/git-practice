@@ -1,0 +1,32 @@
+
+name: Create a pull request for follow.
+
+on:
+  # 下記のブランチにpushされたタイミングをトリガーとする
+  push:
+    branches: [ master, release/1.0.0, release/1.0.1 ]
+
+jobs:
+  create-release-pr:
+    runs-on: ubuntu-latest
+    
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+    steps:
+      - uses: actions/checkout@v2
+        
+      # 現在のブランチ名を取得
+      - name: Get current branch name
+        id: branch_name
+        run: |
+          echo “::set-output name=current::${GITHUB_REF##*/}”
+          echo “::set-output name=base::‘’”
+
+      # マージ先のブランチを設定
+      # 1.0.1 <- 1.0.0
+      - name: Set base branch name(current == release/1.0.0)
+        run: |
+          echo "current branch: ${steps.branch_name.outputs.current}"
+          steps.branch_name.outputs.base="release/1.0.1"
+      
