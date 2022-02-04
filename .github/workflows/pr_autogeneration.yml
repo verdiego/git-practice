@@ -27,7 +27,7 @@ jobs:
         if: ${{ steps.branch_name.outputs.current == 'master' }}
         run: |
           echo "current branch: ${{ steps.branch_name.outputs.current }}"
-          steps.branch_name.outputs.base='release/1.0.0'
+          $steps.branch_name.outputs.base='release/1.0.0'
       # 1.0.1 <- 1.0.0
       - name: Set base branch name(current == release/1.0.0)
         if: ${{ steps.branch_name.outputs.current == 'release/1.0.0' }}
