@@ -56,5 +56,5 @@ jobs:
       - name: Create release pr
         if: ${{ steps.check_pr.outputs.count == 0 && steps.branch_name.outputs.base != '' }}
         run: |
-          gh pr create --base "$ENV_1" --head ${{ steps.branch_name.outputs.current }} --title ${{ steps.check_pr.outputs.pr_title }} --body ''
+          gh pr create --base $ENV_1 --head ${{ steps.branch_name.outputs.current }} --title ${{ steps.check_pr.outputs.pr_title }} --body ''
           
