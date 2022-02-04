@@ -19,8 +19,8 @@ jobs:
       - name: Get current branch name
         id: branch_name
         run: |
-          echo '::set-output name=current::${GITHUB_REF##*/}'
-          echo '::set-output name=base::‘’'
+          echo "::set-output name=current::${GITHUB_REF##*/}"
+          echo "::set-output name=base::''"
       # マージ先のブランチを設定
       # 1.0.1 <- 1.0.0
       - name: Set base branch name(current == release/1.0.0)
@@ -38,8 +38,8 @@ jobs:
         id: check_pr
         run: |
           pr_title='${{ steps.branch_name.outputs.base }} <- ${{ steps.branch_name.outputs.current }}'
-          echo '::set-output name=count::$(gh pr list --search '${pr_title} in:title' --base ${{ steps.branch_name.outputs.base }} | wc -l)'
-          echo '::set-output name=pr_title::$pr_title'
+          echo "::set-output name=count::$(gh pr list --search '${pr_title} in:title' --base ${{ steps.branch_name.outputs.base }} | wc -l)"
+          echo "::set-output name=pr_title::$pr_title"
       # PRがまだ存在しなければ、PRを作成
       - name: Create release pr
         if: ${{ steps.check_pr.outputs.count == 0 && steps.branch_name.outputs.base != '' }}
