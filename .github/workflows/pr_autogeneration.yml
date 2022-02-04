@@ -37,8 +37,8 @@ jobs:
       - name: Check if pr exists
         id: check_pr
         run: |
-          pr_title=“${{ steps.branch_name.outputs.base }}<-${{ steps.branch_name.outputs.current }}”
-          echo “::set-output name=count::$(gh pr list --search ${pr_title}' in:title’ --base ${{ steps.branch_name.outputs.base }} | wc -l)”
+          pr_title=“${{ steps.branch_name.outputs.base }} <- ${{ steps.branch_name.outputs.current }}”
+          echo “::set-output name=count::$(gh pr list --search '${pr_title} in:title’ --base ${{ steps.branch_name.outputs.base }} | wc -l)”
           echo “::set-output name=pr_title::$pr_title”
       # PRがまだ存在しなければ、PRを作成
       - name: Create release pr
