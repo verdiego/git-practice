@@ -19,7 +19,7 @@ jobs:
       - name: Get current branch name
         id: branch_name
         run: |
-          echo "::set-output name=current::${GITHUB_REF##*/}"
+          echo "::set-output name=current::${GITHUB_REF#refs/heads/}"
       # マージ先のブランチを設定
       # master
       - name: Set base branch name(current == master)
