@@ -52,7 +52,7 @@ jobs:
         run: |
           base=$ENV_1 
           echo "::set-output name=count::$(gh pr list --head ${{ steps.branch_name.outputs.current }} --base ${base} | wc -l)"
-          echo "count: ${count}　"
+          echo "count: $(gh pr list --head ${{ steps.branch_name.outputs.current }} --base ${base} | wc -l)　"
           echo "base branch: ${base}"
       # PRがまだ存在しなければ、PRを作成
       - name: Create release pr
