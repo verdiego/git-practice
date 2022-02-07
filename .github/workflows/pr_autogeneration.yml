@@ -1,0 +1,64 @@
+name: Create a pull request for follow.
+
+on:
+  # 下記のブランチにpushされたタイミングをトリガーとする
+  push:
+    branches: [ master, release/1.0.0, release/1.0.1 ]
+
+jobs:
+  create-release-pr:
+    runs-on: ubuntu-latest
+
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v2
+        
+      # 現在のブランチ名を取得
+      - name: Get current branch name
+        id: branch_name
+        run: |
+          echo "::set-output name=current::${GITHUB_REF#refs/heads/}"
+      # マージ先のブランチを設定
+      # master
+      - name: Set base branch name(current == master)
+        if: ${{ steps.branch_name.outputs.current == 'master' }}
+        run: |
+          echo "current branch: ${{ steps.branch_name.outputs.current }}"
+          echo "ENV_1=release/1.0.0" >> $GITHUB_ENV
+        env:
+          ENV_1: release/1.0.0
+      # 1.0.1 <- 1.0.0
+      - name: Set base branch name(current == release/1.0.0)
+        if: ${{ steps.branch_name.outputs.current == 'release/1.0.0' }}
+        run: |
+          echo "current branch: ${{ steps.branch_name.outputs.current }}"
+          echo "ENV_1=release/1.0.1" >> $GITHUB_ENV
+        env:
+          ENV_1: release/1.0.1
+      # 1.0.2 <- 1.0.1
+      - name: Set base branch name(current == release/1.0.1)
+        if: ${{ steps.branch_name.outputs.current == 'release/1.0.1' }}
+        run: |
+          echo "current branch: ${{ steps.branch_name.outputs.current }}"
+          echo "ENV_1=release/1.0.2" >> $GITHUB_ENV
+        env:
+          ENV_1: release/1.0.2
+          
+      # PRが既に存在するかどうかをチェック
+      - name: Check if pr exists
+        id: check_pr
+        run: |
+          base=$ENV_1 
+          echo "::set-output name=count::$(gh pr list --head ${{ steps.branch_name.outputs.current }} --base ${base} | wc -l)"
+          echo "count: $count"
+          echo "base branch: ${base}"
+      # PRがまだ存在しなければ、PRを作成
+      - name: Create release pr
+        if: ${{ steps.check_pr.outputs.count == 0　}}
+        run: |
+          base=$ENV_1
+          pr_title="${base}<-${{ steps.branch_name.outputs.current }}"
+          gh pr create --base ${base} --head ${{ steps.branch_name.outputs.current }} --title ${pr_title} --body ''
+          
